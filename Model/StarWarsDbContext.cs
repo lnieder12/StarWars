@@ -10,6 +10,8 @@ namespace StarWars.Model
 
         public DbSet<Game> Games { get; set;}
 
+        public DbSet<GameSoldier> GameSoldiers { get; set;}
+
 
         public StarWarsDbContext(DbContextOptions<StarWarsDbContext> context) : base(context) { }
 
