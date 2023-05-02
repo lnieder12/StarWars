@@ -28,6 +28,9 @@ namespace StarWars.Model
                 .HasDiscriminator<string>(e => e.SoldierType)
                 .HasValue("Empire");
 
+            modelBuilder.Entity<GameSoldier>()
+                .HasKey(gs => new { gs.GameId, gs.SoldierId });
+
             base.OnModelCreating(modelBuilder);
         }
     }

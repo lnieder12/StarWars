@@ -10,10 +10,13 @@ public class ServiceRound : Service<Round>
 
     private RoundRepository roundRepo;
 
+    private ServiceGameSoldier gsSrv;
+
     public ServiceRound(StarWarsDbContext context) : base(context)
     {
         this.context = context;
         this.roundRepo = new RoundRepository(context);
+        gsSrv = new ServiceGameSoldier(context);
     }
 
     public override List<Round> GetAll()
@@ -38,8 +41,6 @@ public class ServiceRound : Service<Round>
         {
             Attacker = soldAtt,
             Defender = soldDef,
-            IsDead = (soldDef.Health <= 0),
-            HpLeft = soldDef.Health
         };
 
         

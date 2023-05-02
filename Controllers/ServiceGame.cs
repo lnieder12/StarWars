@@ -11,10 +11,13 @@ public class ServiceGame : Service<Game>
 
     private GameRepository gameRepo;
 
+    private ServiceGameSoldier gsSrv;
+
     public ServiceGame(StarWarsDbContext context) : base(context)
     {
-        this._context = context;
-        this.gameRepo = new GameRepository(context);
+        _context = context;
+        gameRepo = new GameRepository(context);
+        gsSrv = new ServiceGameSoldier(context);
     }
 
     public Game CreateGame(int rebels, int empires, int nbRounds)
@@ -85,7 +88,7 @@ public class ServiceGame : Service<Game>
     public Soldier GetSoldier(int id)
     {
         var srv = new Service<Soldier>(_context);
-
+        
         return srv.Get(id);
     }
 
@@ -94,11 +97,7 @@ public class ServiceGame : Service<Game>
         if (SoldierInGame(id, soldierId))
             return null;
 
-       
-
         var soldier = GetSoldier(soldierId);
-
-        soldier.Health = soldier.MaxHealth;
 
         var game = GetIncludeSoldiers(id);
 
@@ -108,6 +107,17 @@ public class ServiceGame : Service<Game>
         }
 
         game.Soldiers.Add(soldier);
+
+        var gs = new GameSoldier()
+        {
+            GameId = game.Id,
+            Game = game,
+            SoldierId = soldierId,
+            Soldier = soldier,
+            Health = soldier.MaxHealth
+        };
+
+        gsSrv.Add(gs);
 
         _context.SaveChanges();
 
@@ -179,14 +189,14 @@ public class ServiceGame : Service<Game>
         return GetIncludeSoldiers(id)?.Empires;
     }
 
-    public List<Soldier> FilterValideSoldiers(List<Soldier> soldiers)
+    public List<Soldier> FilterValideSoldiers(List<Soldier> soldiers, int gameId)
     {
-        return soldiers.FindAll(s => s.Health > 0);
+        return soldiers.FindAll(s => gsSrv.SoldierHealth(gameId, s.Id) > 0);
     }
 
     public Soldier GetRandomSoldier(int id)
     {
-        var soldiers = FilterValideSoldiers(GetSoldiers(id));
+        var soldiers = FilterValideSoldiers(GetSoldiers(id), id);
         if (soldiers.IsNullOrEmpty())
             return null;
         Random random = new Random();
@@ -214,12 +224,12 @@ public class ServiceGame : Service<Game>
 
     public List<Rebel> GetValideRebels(int id)
     {
-        return FilterValideSoldiers(new List<Soldier>(GetRebels(id))).Cast<Rebel>().ToList();
+        return FilterValideSoldiers(new List<Soldier>(GetRebels(id)), id).Cast<Rebel>().ToList();
     }
 
     public List<Empire> GetValideEmpires(int id)
     {
-        return FilterValideSoldiers(new List<Soldier>(GetEmpires(id))).Cast<Empire>().ToList();
+        return FilterValideSoldiers(new List<Soldier>(GetEmpires(id)), id).Cast<Empire>().ToList();
     }
 
     public int NbValideRebels(int id)
@@ -258,13 +268,17 @@ public class ServiceGame : Service<Game>
 
         if (defender == null)
             return null;
-        defender.Health -= att.Attack;
-        if(defender.Health < 0)
-            defender.Health = 0;
+        var defHealth = gsSrv.Get(id, defender.Id);
+        defHealth.Health -= att.Attack;
 
-        var round = AddRound(id, srv.AddRound(att.Id, defender.Id).Id);
+        if (defHealth.Health < 0)
+            defHealth.Health = 0;
 
-        return round;
+        var round = srv.AddRound(att.Id, defender.Id);
+        round.HpLeft = defHealth.Health;
+        round.IsDead = defHealth.Health <= 0;
+
+        return AddRound(id, round.Id);
 
     }
 
@@ -288,7 +302,7 @@ public class ServiceGame : Service<Game>
     public int SoldierScore(int id, Soldier soldier)
     {
         var damages = SoldierTotalDamages(id, soldier.Id);
-        return (damages + soldier.Health) * 10;
+        return (damages + gsSrv.SoldierHealth(id, soldier.Id)) * 10;
     }
 
     public SoldierScore GetSoldierScore(int id, Soldier sld)

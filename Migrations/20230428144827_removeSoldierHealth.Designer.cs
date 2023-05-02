@@ -11,8 +11,8 @@ using StarWars.Model;
 namespace StarWars.Migrations
 {
     [DbContext(typeof(StarWarsDbContext))]
-    [Migration("20230426071720_Hpleft")]
-    partial class Hpleft
+    [Migration("20230428144827_removeSoldierHealth")]
+    partial class removeSoldierHealth
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -34,6 +34,24 @@ namespace StarWars.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Games");
+                });
+
+            modelBuilder.Entity("StarWars.Model.GameSoldier", b =>
+                {
+                    b.Property<int>("GameId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SoldierId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Health")
+                        .HasColumnType("int");
+
+                    b.HasKey("GameId", "SoldierId");
+
+                    b.HasIndex("SoldierId");
+
+                    b.ToTable("GameSoldiers");
                 });
 
             modelBuilder.Entity("StarWars.Model.Round", b =>
@@ -77,15 +95,15 @@ namespace StarWars.Migrations
                     b.Property<int>("Attack")
                         .HasColumnType("int");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
                     b.Property<int?>("GameId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Health")
+                    b.Property<int>("MaxHealth")
                         .HasColumnType("int");
+
+                    b.Property<string>("SoldierType")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
@@ -93,7 +111,7 @@ namespace StarWars.Migrations
 
                     b.ToTable("Soldiers");
 
-                    b.HasDiscriminator<string>("Discriminator").HasValue("Soldier");
+                    b.HasDiscriminator<string>("SoldierType").HasValue("Soldier");
 
                     b.UseTphMappingStrategy();
                 });
@@ -137,6 +155,25 @@ namespace StarWars.Migrations
                     b.HasIndex("GameId1");
 
                     b.HasDiscriminator().HasValue("Rebel");
+                });
+
+            modelBuilder.Entity("StarWars.Model.GameSoldier", b =>
+                {
+                    b.HasOne("StarWars.Model.Game", "Game")
+                        .WithMany()
+                        .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("StarWars.Model.Soldier", "Soldier")
+                        .WithMany()
+                        .HasForeignKey("SoldierId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Game");
+
+                    b.Navigation("Soldier");
                 });
 
             modelBuilder.Entity("StarWars.Model.Round", b =>

@@ -8,8 +8,6 @@ public class Soldier
     [Range(1000, 2000)]
     public int MaxHealth { get; set; }
 
-    public int Health { get; set; }
-
     [Range(100, 500)]
     public int Attack { get; set; }
 

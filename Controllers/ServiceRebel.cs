@@ -18,7 +18,6 @@ public class ServiceRebel : Service<Rebel>
         rebel.Attack = random.Next(100, 500);
         var rnd = random.Next(1000, 2000);
         rebel.MaxHealth = rnd;
-        rebel.Health = rnd;
         rebel.Name = "REB-" + number;
 
         return this.Add(rebel);

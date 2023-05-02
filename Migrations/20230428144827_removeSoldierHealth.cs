@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace StarWars.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class removeSoldierHealth : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,7 +19,8 @@ namespace StarWars.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    MaxRound = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -33,9 +34,9 @@ namespace StarWars.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Health = table.Column<int>(type: "int", nullable: false),
+                    MaxHealth = table.Column<int>(type: "int", nullable: false),
                     Attack = table.Column<int>(type: "int", nullable: false),
-                    Discriminator = table.Column<string>(type: "longtext", nullable: false)
+                    SoldierType = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     GameId = table.Column<int>(type: "int", nullable: true),
                     Empire_Name = table.Column<string>(type: "longtext", nullable: true)
@@ -67,6 +68,32 @@ namespace StarWars.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "GameSoldiers",
+                columns: table => new
+                {
+                    GameId = table.Column<int>(type: "int", nullable: false),
+                    SoldierId = table.Column<int>(type: "int", nullable: false),
+                    Health = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GameSoldiers", x => new { x.GameId, x.SoldierId });
+                    table.ForeignKey(
+                        name: "FK_GameSoldiers_Games_GameId",
+                        column: x => x.GameId,
+                        principalTable: "Games",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_GameSoldiers_Soldiers_SoldierId",
+                        column: x => x.SoldierId,
+                        principalTable: "Soldiers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "Rounds",
                 columns: table => new
                 {
@@ -75,6 +102,7 @@ namespace StarWars.Migrations
                     AttackerId = table.Column<int>(type: "int", nullable: false),
                     DefenderId = table.Column<int>(type: "int", nullable: false),
                     IsDead = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    HpLeft = table.Column<int>(type: "int", nullable: false),
                     GameId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -99,6 +127,11 @@ namespace StarWars.Migrations
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GameSoldiers_SoldierId",
+                table: "GameSoldiers",
+                column: "SoldierId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Rounds_AttackerId",
@@ -134,6 +167,9 @@ namespace StarWars.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "GameSoldiers");
+
             migrationBuilder.DropTable(
                 name: "Rounds");
 

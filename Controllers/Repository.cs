@@ -25,7 +25,7 @@ public class Repository<T> where T : class
         return ctx.Set<T>().ToList();
     }
 
-    public T Get(int id) 
+    public virtual T Get(int id) 
     {
         return ctx.Set<T>().Find(id);
     }
