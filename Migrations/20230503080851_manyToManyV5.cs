@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace StarWars.Migrations
 {
     /// <inheritdoc />
-    public partial class removeSoldierHealth : Migration
+    public partial class manyToManyV5 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -38,32 +38,14 @@ namespace StarWars.Migrations
                     Attack = table.Column<int>(type: "int", nullable: false),
                     SoldierType = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    GameId = table.Column<int>(type: "int", nullable: true),
                     Empire_Name = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Empire_GameId1 = table.Column<int>(type: "int", nullable: true),
                     Name = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    GameId1 = table.Column<int>(type: "int", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Soldiers", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Soldiers_Games_Empire_GameId1",
-                        column: x => x.Empire_GameId1,
-                        principalTable: "Games",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Soldiers_Games_GameId",
-                        column: x => x.GameId,
-                        principalTable: "Games",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Soldiers_Games_GameId1",
-                        column: x => x.GameId1,
-                        principalTable: "Games",
-                        principalColumn: "Id");
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -73,6 +55,7 @@ namespace StarWars.Migrations
                 {
                     GameId = table.Column<int>(type: "int", nullable: false),
                     SoldierId = table.Column<int>(type: "int", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false),
                     Health = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -147,21 +130,6 @@ namespace StarWars.Migrations
                 name: "IX_Rounds_GameId",
                 table: "Rounds",
                 column: "GameId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Soldiers_Empire_GameId1",
-                table: "Soldiers",
-                column: "Empire_GameId1");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Soldiers_GameId",
-                table: "Soldiers",
-                column: "GameId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Soldiers_GameId1",
-                table: "Soldiers",
-                column: "GameId1");
         }
 
         /// <inheritdoc />
@@ -174,10 +142,10 @@ namespace StarWars.Migrations
                 name: "Rounds");
 
             migrationBuilder.DropTable(
-                name: "Soldiers");
+                name: "Games");
 
             migrationBuilder.DropTable(
-                name: "Games");
+                name: "Soldiers");
         }
     }
 }

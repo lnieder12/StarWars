@@ -11,8 +11,8 @@ using StarWars.Model;
 namespace StarWars.Migrations
 {
     [DbContext(typeof(StarWarsDbContext))]
-    [Migration("20230428144827_removeSoldierHealth")]
-    partial class removeSoldierHealth
+    [Migration("20230503080851_manyToManyV5")]
+    partial class manyToManyV5
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -45,6 +45,9 @@ namespace StarWars.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("Health")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Id")
                         .HasColumnType("int");
 
                     b.HasKey("GameId", "SoldierId");
@@ -95,9 +98,6 @@ namespace StarWars.Migrations
                     b.Property<int>("Attack")
                         .HasColumnType("int");
 
-                    b.Property<int?>("GameId")
-                        .HasColumnType("int");
-
                     b.Property<int>("MaxHealth")
                         .HasColumnType("int");
 
@@ -106,8 +106,6 @@ namespace StarWars.Migrations
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("GameId");
 
                     b.ToTable("Soldiers");
 
@@ -120,20 +118,12 @@ namespace StarWars.Migrations
                 {
                     b.HasBaseType("StarWars.Model.Soldier");
 
-                    b.Property<int?>("GameId1")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.HasIndex("GameId1");
-
                     b.ToTable("Soldiers", t =>
                         {
-                            t.Property("GameId1")
-                                .HasColumnName("Empire_GameId1");
-
                             t.Property("Name")
                                 .HasColumnName("Empire_Name");
                         });
@@ -145,14 +135,9 @@ namespace StarWars.Migrations
                 {
                     b.HasBaseType("StarWars.Model.Soldier");
 
-                    b.Property<int?>("GameId1")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("longtext");
-
-                    b.HasIndex("GameId1");
 
                     b.HasDiscriminator().HasValue("Rebel");
                 });
@@ -160,7 +145,7 @@ namespace StarWars.Migrations
             modelBuilder.Entity("StarWars.Model.GameSoldier", b =>
                 {
                     b.HasOne("StarWars.Model.Game", "Game")
-                        .WithMany()
+                        .WithMany("Soldiers")
                         .HasForeignKey("GameId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -199,33 +184,8 @@ namespace StarWars.Migrations
                     b.Navigation("Defender");
                 });
 
-            modelBuilder.Entity("StarWars.Model.Soldier", b =>
-                {
-                    b.HasOne("StarWars.Model.Game", null)
-                        .WithMany("Soldiers")
-                        .HasForeignKey("GameId");
-                });
-
-            modelBuilder.Entity("StarWars.Model.Empire", b =>
-                {
-                    b.HasOne("StarWars.Model.Game", null)
-                        .WithMany("Empires")
-                        .HasForeignKey("GameId1");
-                });
-
-            modelBuilder.Entity("StarWars.Model.Rebel", b =>
-                {
-                    b.HasOne("StarWars.Model.Game", null)
-                        .WithMany("Rebels")
-                        .HasForeignKey("GameId1");
-                });
-
             modelBuilder.Entity("StarWars.Model.Game", b =>
                 {
-                    b.Navigation("Empires");
-
-                    b.Navigation("Rebels");
-
                     b.Navigation("Rounds");
 
                     b.Navigation("Soldiers");

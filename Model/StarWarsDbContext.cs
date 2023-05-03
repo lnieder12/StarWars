@@ -31,6 +31,9 @@ namespace StarWars.Model
             modelBuilder.Entity<GameSoldier>()
                 .HasKey(gs => new { gs.GameId, gs.SoldierId });
 
+            modelBuilder.Entity<Game>()
+                .HasMany(g => g.Soldiers);
+
             base.OnModelCreating(modelBuilder);
         }
     }

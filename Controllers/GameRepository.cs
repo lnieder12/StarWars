@@ -18,7 +18,7 @@ public class GameRepository : Repository<Game>
 
     public Game GetIncludeSoldiers(int id)
     {
-        return ctx.Set<Game>().Include(g => g.Soldiers).FirstOrDefault(g => g.Id == id);
+        return ctx.Set<Game>().Include(g => g.Soldiers).ThenInclude(gs => gs.Soldier).FirstOrDefault(g => g.Id == id);
     }
     public new List<Game> GetAll()
     {

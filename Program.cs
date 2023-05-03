@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using StarWars.Model;
@@ -16,7 +17,15 @@ builder.Services.AddCors(o =>
     });
 });
 
-builder.Services.AddControllers();
+
+    
+
+builder.Services.AddControllers()
+    .AddNewtonsoftJson(
+        options =>
+        {
+            options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+        });
 builder.Services.AddDbContextPool<StarWarsDbContext>(opt =>
 {
     const string cs = "Server=localhost;Port=3306;Database=StarWars;Uid=root;Pwd=root";

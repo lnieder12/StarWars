@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using StarWars.Model;
+using static NuGet.Packaging.PackagingConstants;
 
 namespace StarWars.Controllers;
 
@@ -106,7 +107,7 @@ public class ServiceGame : Service<Game>
             return null;
         }
 
-        game.Soldiers.Add(soldier);
+        
 
         var gs = new GameSoldier()
         {
@@ -118,6 +119,8 @@ public class ServiceGame : Service<Game>
         };
 
         gsSrv.Add(gs);
+
+        game.Soldiers.Add(gs);
 
         _context.SaveChanges();
 
@@ -171,37 +174,59 @@ public class ServiceGame : Service<Game>
     public bool SoldierInGame(int id, int soldierId)
     {
         var game = GetIncludeSoldiers(id);
-        return game?.Soldiers?.Any(s => s.Id == soldierId) ?? false;
+        return game?.Soldiers?.Any(gs => gs.SoldierId == soldierId) ?? false;
     }
 
-    public List<Soldier> GetSoldiers(int id)
+    public List<GameSoldier> GetGS(int id)
     {
         return GetIncludeSoldiers(id)?.Soldiers;
     }
 
+    public List<GameSoldier> GetGSRebel(int id)
+    {
+        return GetIncludeSoldiers(id)?.Soldiers.Where(gs => gs.Soldier.SoldierType == "Rebel").ToList();
+    }
+
+    public List<GameSoldier> GetGSEmpire(int id)
+    {
+        return GetIncludeSoldiers(id)?.Soldiers.Where(gs => gs.Soldier.SoldierType == "Empire").ToList();
+    }
+
+    public List<Soldier> GetSoldiers(int id)
+    {
+        return gsToSoldier(GetGS(id));
+    }
+
+    public List<Soldier> gsToSoldier(List<GameSoldier> gameSoldiers)
+    {
+        var soldiers = new List<Soldier>();
+        gameSoldiers.ForEach(gs => soldiers.Add(gs.Soldier));
+        return soldiers;
+    }
+
     public List<Rebel> GetRebels(int id)
     {
-        return GetIncludeSoldiers(id)?.Rebels;
+        return gsToSoldier(GetGSRebel(id)).Cast<Rebel>().ToList();
     }
 
     public List<Empire> GetEmpires(int id)
     {
-        return GetIncludeSoldiers(id)?.Empires;
+        return gsToSoldier(GetGSEmpire(id)).Cast<Empire>().ToList();
     }
 
-    public List<Soldier> FilterValideSoldiers(List<Soldier> soldiers, int gameId)
+    public List<GameSoldier> FilterValideSoldiers(List<GameSoldier> soldiers, int gameId)
     {
-        return soldiers.FindAll(s => gsSrv.SoldierHealth(gameId, s.Id) > 0);
+        return soldiers.FindAll(gs => gs.Health > 0);
     }
 
     public Soldier GetRandomSoldier(int id)
     {
-        var soldiers = FilterValideSoldiers(GetSoldiers(id), id);
+        var soldiers = FilterValideSoldiers(GetGS(id), id);
         if (soldiers.IsNullOrEmpty())
             return null;
         Random random = new Random();
 
-        return soldiers[random.Next(soldiers.Count())];
+        return soldiers[random.Next(soldiers.Count())].Soldier;
     }
 
     public Rebel GetRandomRebel(int id)
@@ -210,7 +235,7 @@ public class ServiceGame : Service<Game>
         if (rebels.IsNullOrEmpty())
             return null;
         Random random = new Random();
-        return (Rebel)rebels[random.Next(rebels.Count())];
+        return (Rebel)rebels[random.Next(rebels.Count())].Soldier;
     }
 
     public Empire GetRandomEmpire(int id)
@@ -219,17 +244,17 @@ public class ServiceGame : Service<Game>
         if (empires.IsNullOrEmpty())
             return null;
         Random random = new Random();
-        return (Empire)empires[random.Next(empires.Count())];
+        return (Empire)empires[random.Next(empires.Count())].Soldier;
     }
 
-    public List<Rebel> GetValideRebels(int id)
+    public List<GameSoldier> GetValideRebels(int id)
     {
-        return FilterValideSoldiers(new List<Soldier>(GetRebels(id)), id).Cast<Rebel>().ToList();
+        return FilterValideSoldiers(GetGSRebel(id), id);
     }
 
-    public List<Empire> GetValideEmpires(int id)
+    public List<GameSoldier> GetValideEmpires(int id)
     {
-        return FilterValideSoldiers(new List<Soldier>(GetEmpires(id)), id).Cast<Empire>().ToList();
+        return FilterValideSoldiers(GetGSEmpire(id), id);
     }
 
     public int NbValideRebels(int id)
@@ -318,7 +343,7 @@ public class ServiceGame : Service<Game>
     public List<SoldierScore> GetSoldierScores(int id)
     {
         var scores = new List<SoldierScore>();
-        GetSoldiers(id).ForEach(soldier => scores.Add(this.GetSoldierScore(id, soldier)));
+        GetSoldiers(id).ForEach(sld => scores.Add(this.GetSoldierScore(id, sld)));
         return scores;
     }
 
