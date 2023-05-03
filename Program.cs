@@ -1,5 +1,3 @@
-using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using StarWars.Model;
 
