@@ -27,9 +27,12 @@ builder.Services.AddControllers()
 builder.Services.AddDbContextPool<StarWarsDbContext>(opt =>
 {
     const string cs = "Server=localhost;Port=3306;Database=StarWars;Uid=root;Pwd=root";
+
     opt.UseMySql(cs, ServerVersion.AutoDetect(cs));
 });
 builder.Services.AddMvc().AddNewtonsoftJson();
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
