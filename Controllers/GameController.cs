@@ -166,6 +166,13 @@ public class
         var queries = HttpContext.Request.Query.ToDictionary(k => k.Key, v => v.Value);
         return _svGame.GetSoldierScoresPage(id, queries);
     }
+
+    [HttpGet("{id}/score/count")]
+    public ActionResult<int> GetScoreCount(int id)
+    {
+        var queries = HttpContext.Request.Query.ToDictionary(k => k.Key, v => v.Value);
+        return _svGame.GetScoreFilteredCount(id, queries);
+    }
     
 
     [HttpGet("{id}/round/nb")]
