@@ -71,4 +71,15 @@ public class GenericController<T> : ControllerBase where T : class
             return true;
         return NotFound();
     }
+
+    [HttpGet("page")]
+    public ActionResult<List<T>> GetPage(int skip, int pageSize)
+    {
+        var items = Service.GetPage(skip, pageSize);
+        if (items == null)
+        {
+            return BadRequest();
+        }
+        return items;
+    }
 }

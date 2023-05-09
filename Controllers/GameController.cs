@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Primitives;
 using StarWars.Model;
 
 namespace StarWars.Controllers;
@@ -159,6 +160,12 @@ public class
         return _svGame.GetSoldierScores(id);
     }
 
+    [HttpGet("{id}/score/page")]
+    public ActionResult<List<SoldierScore>> GetSoldierScorePage(int id)
+    {
+        var queries = HttpContext.Request.Query.ToDictionary(k => k.Key, v => v.Value);
+        return _svGame.GetSoldierScoresPage(id, queries);
+    }
     
 
     [HttpGet("{id}/round/nb")]
