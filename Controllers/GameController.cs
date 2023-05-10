@@ -160,11 +160,19 @@ public class
         return _svGame.GetSoldierScores(id);
     }
 
+
     [HttpGet("{id}/score/page")]
     public ActionResult<List<SoldierScore>> GetSoldierScorePage(int id)
     {
         var queries = HttpContext.Request.Query.ToDictionary(k => k.Key, v => v.Value);
         return _svGame.GetSoldierScoresPage(id, queries);
+    }
+
+    [HttpGet("{id}/round/page")]
+    public ActionResult<List<Round>> GetRoundsPage(int id)
+    {
+        var queries = HttpContext.Request.Query.ToDictionary(k => k.Key, v => v.Value);
+        return _svGame.GetRoundsPage(id, queries);
     }
 
     [HttpGet("{id}/score/count")]
