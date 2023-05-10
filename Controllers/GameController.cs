@@ -175,13 +175,20 @@ public class
         return _svGame.GetRoundsPage(id, queries);
     }
 
-    [HttpGet("{id}/score/count")]
+    [HttpGet("{id}/score/page/count")]
     public ActionResult<int> GetScoreCount(int id)
     {
         var queries = HttpContext.Request.Query.ToDictionary(k => k.Key, v => v.Value);
         return _svGame.GetScoreFilteredCount(id, queries);
     }
-    
+
+    [HttpGet("{id}/round/page/count")]
+    public ActionResult<int> GetRoundsCount(int id)
+    {
+        var queries = HttpContext.Request.Query.ToDictionary(k => k.Key, v => v.Value);
+        return _svGame.GetRoundFilteredCount(id, queries);
+    }
+
 
     [HttpGet("{id}/round/nb")]
     public ActionResult<int> GetNbRounds(int id)
