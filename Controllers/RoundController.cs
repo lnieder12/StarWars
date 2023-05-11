@@ -21,16 +21,16 @@ public class RoundController : GenericController<Round>
         return svRound.GetAll();
     }
 
-    [HttpPost("{att:int}/{def:int}")]
-    public ActionResult<Round> AddRound(int att, int def)
-    {
-        var round = svRound.AddRound(att, def);
-        if(round == null)
-        {
-            return BadRequest();
-        }
-        return round;
-    }
+    // [HttpPost("{att:int}/{def:int}")]
+    // public ActionResult<Round> AddRound(int att, int def)
+    // {
+    //     var round = svRound.AddRound(att, def);
+    //     if(round == null)
+    //     {
+    //         return BadRequest();
+    //     }
+    //     return round;
+    // }
 
     public override ActionResult<Round> Get(int id)
     {
