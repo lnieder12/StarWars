@@ -30,7 +30,7 @@ public class RoundController : GenericController<Round>
     //         return BadRequest();
     //     }
     //     return round;
-    // }
+// }
 
     public override ActionResult<Round> Get(int id)
     {
