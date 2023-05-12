@@ -7,8 +7,7 @@ namespace StarWars.Controllers;
     
 [Route("[controller]")]
 [ApiController]
-public class 
-    GameController : GenericController<Game>
+public class GameController : GenericController<Game>
 {
 
     private readonly ServiceGame _svGame;
@@ -33,7 +32,7 @@ public class
     }
 
     [HttpPost("selectedSoldiers")]
-    public ActionResult<Game> CreateGameSelectedSoldiers(Rebels_Empires soldiers, int nbRound)
+    public ActionResult<Game> CreateGameSelectedSoldiers(RebelsEmpires soldiers, int nbRound)
     {
         var game = _svGame.CreateSelectedGame(soldiers, nbRound);
         if (game == null)
