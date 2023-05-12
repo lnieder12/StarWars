@@ -67,18 +67,6 @@ public class GameController : GenericController<Game>
         return rebel;
     }
 
-    [HttpPost("{id}/" + nameof(Round) + "/{roundId}")]
-    public ActionResult<Round> AddRound(int id, int roundId)
-    {
-        var round = _svGame.AddRound(id, roundId);
-        if (round == null)
-        {
-            return BadRequest();
-        }
-
-        return round;
-    }
-
     [HttpGet("{id}/round")]
     public ActionResult<List<Round>> GetRounds(int id)
     {
@@ -126,18 +114,6 @@ public class GameController : GenericController<Game>
         }
 
         return empires;
-    }
-
-    [HttpGet("{id:int}/soldier/random")]
-    public ActionResult<Soldier> GetRandomSoldier(int id)
-    {
-        var soldier = _svGame.GetRandom<Soldier>(id);
-        if (soldier == null)
-        {
-            return BadRequest();
-        }
-
-        return soldier;
     }
 
     [HttpGet("{id:int}/fight")]
@@ -196,13 +172,13 @@ public class GameController : GenericController<Game>
     [HttpGet("{id:int}/rebel/Valid")]
     public ActionResult<int> GetNbValidRebels(int id)
     {
-        return _svGame.NbValidSoldier<Rebel>(id);
+        return _svGame.GetNbValidSoldier<Rebel>(id);
     }
 
     [HttpGet("{id:int}/empire/valid")]
     public ActionResult<int> GetNbValidEmpires(int id)
     {
-        return _svGame.NbValidSoldier<Empire>(id);
+        return _svGame.GetNbValidSoldier<Empire>(id);
     }
 
     [HttpGet("{id:int}/enoughSoldiers")]

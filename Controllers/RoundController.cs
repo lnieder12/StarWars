@@ -43,16 +43,4 @@ public class RoundController : GenericController<Round>
         return round;
     }
 
-    [HttpGet("page")]
-    public new ActionResult<List<Round>> GetPage(int lastId, int pageSize)
-    {
-        var rounds = _svRound.GetPage(lastId, pageSize);
-        if (rounds == null)
-        {
-            return BadRequest();
-        }
-
-        return rounds;
-    }
-
 }
