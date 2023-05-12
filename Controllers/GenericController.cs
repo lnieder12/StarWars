@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using StarWars.Model;
+using StarWars.Service;
 
 namespace StarWars.Controllers;
 

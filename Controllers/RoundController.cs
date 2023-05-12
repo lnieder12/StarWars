@@ -1,5 +1,6 @@
 ﻿using StarWars.Model;
 using Microsoft.AspNetCore.Mvc;
+using StarWars.Service;
 
 namespace StarWars.Controllers;
 

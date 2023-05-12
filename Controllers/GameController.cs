@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using StarWars.Model;
+using StarWars.Service;
 
 namespace StarWars.Controllers;
-
+    
 [Route("[controller]")]
 [ApiController]
 public class 
@@ -19,7 +20,7 @@ public class
 
 
 
-    [HttpPost("{rebels}/{empires}")]
+    [HttpPost("{rebels:int}/{empires:int}")]
     public ActionResult<Game> CreateGame(int rebels, int empires, int nbRound)
     {
         var game = _svGame.CreateGame(rebels, empires, nbRound);
@@ -34,7 +35,7 @@ public class
     [HttpPost("selectedSoldiers")]
     public ActionResult<Game> CreateGameSelectedSoldiers(Rebels_Empires soldiers, int nbRound)
     {
-        var game = _svGame.CreateSelectedGame(soldiers.Rebels, soldiers.Empires, nbRound);
+        var game = _svGame.CreateSelectedGame(soldiers, nbRound);
         if (game == null)
         {
             return BadRequest();
@@ -91,7 +92,7 @@ public class
         return rounds;
     }
 
-    [HttpGet("{id}/soldier")]
+    [HttpGet("{id:int}/soldier")]
     public ActionResult<List<Soldier>> GetSoldiers(int id)
     {
         var soldiers = _svGame.GetSoldiers(id);
@@ -103,7 +104,7 @@ public class
         return soldiers;
     }
 
-    [HttpGet("{id}/rebel")]
+    [HttpGet("{id:int}/rebel")]
     public ActionResult<List<Rebel>> GetRebels(int id)
     {
         var rebels = _svGame.GetRebels(id);
@@ -116,7 +117,7 @@ public class
     }
 
 
-    [HttpGet("{id}/empire")]
+    [HttpGet("{id:int}/empire")]
     public ActionResult<List<Empire>> GetEmpires(int id)
     {
         var empires = _svGame.GetEmpires(id);
@@ -128,10 +129,10 @@ public class
         return empires;
     }
 
-    [HttpGet("{id}/soldier/random")]
+    [HttpGet("{id:int}/soldier/random")]
     public ActionResult<Soldier> GetRandomSoldier(int id)
     {
-        var soldier = _svGame.GetRandomSoldier(id);
+        var soldier = _svGame.GetRandom<Soldier>(id);
         if (soldier == null)
         {
             return BadRequest();
@@ -140,7 +141,7 @@ public class
         return soldier;
     }
 
-    [HttpGet("{id}/fight")]
+    [HttpGet("{id:int}/fight")]
     public ActionResult<Round> Fight(int id)
     {
         var round = _svGame.Fight(id);
@@ -152,74 +153,66 @@ public class
         return round;
     }
 
-
-    [HttpGet("{id}/score")]
-    public ActionResult<List<SoldierScore>> GetSoldierScores(int id)
-    {
-        return _svGame.GetSoldierScores(id);
-    }
-
-
-    [HttpGet("{id}/score/page")]
+    [HttpGet("{id:int}/score/page")]
     public ActionResult<List<SoldierScore>> GetSoldierScorePage(int id)
     {
         var queries = HttpContext.Request.Query.ToDictionary(k => k.Key, v => v.Value);
         return _svGame.GetSoldierScoresPage(id, queries);
     }
 
-    [HttpGet("{id}/round/page")]
+    [HttpGet("{id:int}/round/page")]
     public ActionResult<List<Round>> GetRoundsPage(int id)
     {
         var queries = HttpContext.Request.Query.ToDictionary(k => k.Key, v => v.Value);
         return _svGame.GetRoundsPage(id, queries);
     }
 
-    [HttpGet("{id}/score/page/count")]
+    [HttpGet("{id:int}/score/page/count")]
     public ActionResult<int> GetScoreCount(int id)
     {
         var queries = HttpContext.Request.Query.ToDictionary(k => k.Key, v => v.Value);
-        return _svGame.GetScoreFilteredCount(id, queries);
+        return _svGame.GetScoresFilteredCount(id, queries);
     }
 
     [HttpGet("{id}/round/page/count")]
     public ActionResult<int> GetRoundsCount(int id)
     {
         var queries = HttpContext.Request.Query.ToDictionary(k => k.Key, v => v.Value);
-        return _svGame.GetRoundFilteredCount(id, queries);
+        return _svGame.GetRoundsFilteredCount(id, queries);
     }
 
 
-    [HttpGet("{id}/round/nb")]
+    [HttpGet("{id:int}/round/nb")]
     public ActionResult<int> GetNbRounds(int id)
     {
         return _svGame.NbRounds(id);
     }
 
-    [HttpGet("{id}/multipleFight")]
+    [HttpGet("{id:int}/multipleFight")]
     public ActionResult<List<Round>> MultipleFight(int id, int nb)
     {
         return _svGame.MultipleFights(id, nb);
     }
 
-    [HttpGet("{id}/rebel/valide")]
-    public ActionResult<int> GetNbValideRebels(int id)
+    [HttpGet("{id:int}/rebel/Valid")]
+    public ActionResult<int> GetNbValidRebels(int id)
     {
-        return _svGame.NbValideRebels(id);
+        return _svGame.NbValidSoldierWithType<Rebel>(id);
     }
 
-    [HttpGet("{id}/empire/valide")]
-    public ActionResult<int> GetNbValideEmpires(int id)
+    [HttpGet("{id:int}/empire/valid")]
+    public ActionResult<int> GetNbValidEmpires(int id)
     {
-        return _svGame.NbValideEmpires(id);
+        return _svGame.NbValidSoldierWithType<Empire>(id);
     }
 
-    [HttpGet("{id}/enoughSoldiers")]
+    [HttpGet("{id:int}/enoughSoldiers")]
     public ActionResult<bool> EnoughSoldiers(int id)
     {
         return _svGame.EnoughSoldiers(id);
     }
 
-    [HttpGet("{id}/winnerTeam")]
+    [HttpGet("{id:int}/winnerTeam")]
     public ActionResult<string> GetWinnerTeam(int id)
     {
         return _svGame.WinnerTeam(id);
