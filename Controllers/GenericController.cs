@@ -26,7 +26,7 @@ public class GenericController<T> : ControllerBase where T : class
 
 
     // GET
-    [HttpGet("{id}")]
+    [HttpGet("{id:int}")]
     public virtual ActionResult<T> Get(int id)
     {
         var item = Service.Get(id);
@@ -39,7 +39,7 @@ public class GenericController<T> : ControllerBase where T : class
 
 
     // PATCH
-    [HttpPatch("{id}")]
+    [HttpPatch("{id:int}")]
     public ActionResult<T> Patch(int id, [FromBody] JsonPatchDocument<T> patchDocument)
     {
         var item = Service.Patch(id, patchDocument);
@@ -65,7 +65,7 @@ public class GenericController<T> : ControllerBase where T : class
 
 
     // DELETE
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:int}")]
     public ActionResult<bool> Delete(int id)
     {
         if(Service.Delete(id))
@@ -73,14 +73,4 @@ public class GenericController<T> : ControllerBase where T : class
         return NotFound();
     }
 
-    [HttpGet("page")]
-    public ActionResult<List<T>> GetPage(int skip, int pageSize)
-    {
-        var items = Service.GetPage(skip, pageSize);
-        if (items == null)
-        {
-            return BadRequest();
-        }
-        return items;
-    }
 }

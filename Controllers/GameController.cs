@@ -197,13 +197,13 @@ public class
     [HttpGet("{id:int}/rebel/Valid")]
     public ActionResult<int> GetNbValidRebels(int id)
     {
-        return _svGame.NbValidSoldierWithType<Rebel>(id);
+        return _svGame.NbValidSoldier<Rebel>(id);
     }
 
     [HttpGet("{id:int}/empire/valid")]
     public ActionResult<int> GetNbValidEmpires(int id)
     {
-        return _svGame.NbValidSoldierWithType<Empire>(id);
+        return _svGame.NbValidSoldier<Empire>(id);
     }
 
     [HttpGet("{id:int}/enoughSoldiers")]

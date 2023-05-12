@@ -10,16 +10,16 @@ namespace StarWars.Controllers;
 public class RoundController : GenericController<Round>
 {
 
-    private ServiceRound svRound;
+    private readonly ServiceRound _svRound;
 
     public RoundController(StarWarsDbContext context) : base(context)
     {
-        svRound = new ServiceRound(context);
+        _svRound = new ServiceRound(context);
     }
 
     public override ActionResult<List<Round>> GetAll()
     {
-        return svRound.GetAll();
+        return _svRound.GetAll();
     }
 
     // [HttpPost("{att:int}/{def:int}")]
@@ -35,7 +35,7 @@ public class RoundController : GenericController<Round>
 
     public override ActionResult<Round> Get(int id)
     {
-        var round = svRound.GetInclude(id);
+        var round = _svRound.GetInclude(id);
         if (round == null)
         {
             return BadRequest();
@@ -44,9 +44,9 @@ public class RoundController : GenericController<Round>
     }
 
     [HttpGet("page")]
-    public ActionResult<List<Round>> GetPage(int lastId, int pageSize)
+    public new ActionResult<List<Round>> GetPage(int lastId, int pageSize)
     {
-        var rounds = svRound.GetPage(lastId, pageSize);
+        var rounds = _svRound.GetPage(lastId, pageSize);
         if (rounds == null)
         {
             return BadRequest();
