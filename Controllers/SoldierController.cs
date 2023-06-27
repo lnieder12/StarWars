@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StarWars.Model;
+using StarWars.Service;
 
 namespace StarWars.Controllers;
 
@@ -7,7 +8,7 @@ namespace StarWars.Controllers;
 [ApiController]
 public class SoldierController : GenericController<Soldier>
 {
-    public SoldierController(StarWarsDbContext context) : base(context)
+    public SoldierController(StarWarsDbContext context, IService<Soldier> service) : base(context, service)
     {
     }
 }

@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using StarWars.Model;
+using StarWars.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +16,7 @@ builder.Services.AddCors(o =>
     });
 });
 
-
+builder.Services.AddStarWarsServices();
     
 
 builder.Services.AddControllers()

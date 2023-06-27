@@ -10,19 +10,18 @@ namespace StarWars.Controllers;
 public class GameController : GenericController<Game>
 {
 
-    private readonly ServiceGame _svGame;
+    private readonly IGameService _sv;
 
-    public GameController(StarWarsDbContext context) : base(context)
+
+    public GameController(StarWarsDbContext context, IService<Game> service, IGameService sv) : base(context, service)
     {
-        _svGame = new ServiceGame(context);
+        _sv = sv;
     }
-
-
 
     [HttpPost("{rebels:int}/{empires:int}")]
     public ActionResult<Game> CreateGame(int rebels, int empires, int nbRound)
     {
-        var game = _svGame.CreateGame(rebels, empires, nbRound);
+        var game = _sv.CreateGame(rebels, empires, nbRound);
         if (game == null)
         {
             return BadRequest();
@@ -34,7 +33,7 @@ public class GameController : GenericController<Game>
     [HttpPost("selectedSoldiers")]
     public ActionResult<Game> CreateGameSelectedSoldiers(RebelsEmpires soldiers, int nbRound)
     {
-        var game = _svGame.CreateSelectedGame(soldiers, nbRound);
+        var game = _sv.CreateSelectedGame(soldiers, nbRound);
         if (game == null)
         {
             return BadRequest();
@@ -46,7 +45,7 @@ public class GameController : GenericController<Game>
     [HttpPost("{id}/" + nameof(Soldier) + "/{pId}")]
     public ActionResult<Soldier> AddSoldier(int id, int pId)
     {
-        var soldier = _svGame.AddSoldier(id, pId);
+        var soldier = _sv.AddSoldier(id, pId);
         if (soldier == null)
         {
             return BadRequest();
@@ -58,7 +57,7 @@ public class GameController : GenericController<Game>
     [HttpPatch("{id}/" + nameof(Soldier) + "/{soldierId}")]
     public ActionResult<Soldier> PatchSoldier(int id, int soldierId, JsonPatchDocument<Soldier> patch)
     {
-        var rebel = _svGame.PatchSoldier(id, soldierId, patch);
+        var rebel = _sv.PatchSoldier(id, soldierId, patch);
         if (rebel == null)
         {
             return BadRequest();
@@ -70,7 +69,7 @@ public class GameController : GenericController<Game>
     [HttpGet("{id}/round")]
     public ActionResult<List<Round>> GetRounds(int id)
     {
-        var rounds = _svGame.GetRounds(id);
+        var rounds = _sv.GetRounds(id);
         if (rounds == null)
         {
             return BadRequest();
@@ -82,7 +81,7 @@ public class GameController : GenericController<Game>
     [HttpGet("{id:int}/soldier")]
     public ActionResult<List<Soldier>> GetSoldiers(int id)
     {
-        var soldiers = _svGame.GetSoldiers(id);
+        var soldiers = _sv.GetSoldiers(id);
         if (soldiers == null)
         {
             return BadRequest();
@@ -94,7 +93,7 @@ public class GameController : GenericController<Game>
     [HttpGet("{id:int}/rebel")]
     public ActionResult<List<Rebel>> GetRebels(int id)
     {
-        var rebels = _svGame.GetRebels(id);
+        var rebels = _sv.GetRebels(id);
         if (rebels == null)
         {
             return BadRequest();
@@ -107,7 +106,7 @@ public class GameController : GenericController<Game>
     [HttpGet("{id:int}/empire")]
     public ActionResult<List<Empire>> GetEmpires(int id)
     {
-        var empires = _svGame.GetEmpires(id);
+        var empires = _sv.GetEmpires(id);
         if (empires == null)
         {
             return BadRequest();
@@ -119,7 +118,7 @@ public class GameController : GenericController<Game>
     [HttpGet("{id:int}/fight")]
     public ActionResult<Round> Fight(int id)
     {
-        var round = _svGame.Fight(id);
+        var round = _sv.Fight(id);
         if (round == null)
         {
             return null;
@@ -132,65 +131,65 @@ public class GameController : GenericController<Game>
     public ActionResult<List<SoldierScore>> GetSoldierScorePage(int id)
     {
         var queries = HttpContext.Request.Query.ToDictionary(k => k.Key, v => v.Value);
-        return _svGame.GetSoldierScoresPage(id, queries);
+        return _sv.GetSoldierScoresPage(id, queries);
     }
 
     [HttpGet("{id:int}/round/page")]
     public ActionResult<List<Round>> GetRoundsPage(int id)
     {
         var queries = HttpContext.Request.Query.ToDictionary(k => k.Key, v => v.Value);
-        return _svGame.GetRoundsPage(id, queries);
+        return _sv.GetRoundsPage(id, queries);
     }
 
     [HttpGet("{id:int}/score/page/count")]
     public ActionResult<int> GetScoreCount(int id)
     {
         var queries = HttpContext.Request.Query.ToDictionary(k => k.Key, v => v.Value);
-        return _svGame.GetScoresFilteredCount(id, queries);
+        return _sv.GetScoresFilteredCount(id, queries);
     }
 
     [HttpGet("{id}/round/page/count")]
     public ActionResult<int> GetRoundsCount(int id)
     {
         var queries = HttpContext.Request.Query.ToDictionary(k => k.Key, v => v.Value);
-        return _svGame.GetRoundsFilteredCount(id, queries);
+        return _sv.GetRoundsFilteredCount(id, queries);
     }
 
 
     [HttpGet("{id:int}/round/nb")]
     public ActionResult<int> GetNbRounds(int id)
     {
-        return _svGame.NbRounds(id);
+        return _sv.NbRounds(id);
     }
 
     [HttpGet("{id:int}/multipleFight")]
     public ActionResult<List<Round>> MultipleFight(int id, int nb)
     {
-        return _svGame.MultipleFights(id, nb);
+        return _sv.MultipleFights(id, nb);
     }
 
     [HttpGet("{id:int}/rebel/Valid")]
     public ActionResult<int> GetNbValidRebels(int id)
     {
-        return _svGame.GetNbValidSoldier<Rebel>(id);
+        return _sv.GetNbValidSoldier<Rebel>(id);
     }
 
     [HttpGet("{id:int}/empire/valid")]
     public ActionResult<int> GetNbValidEmpires(int id)
     {
-        return _svGame.GetNbValidSoldier<Empire>(id);
+        return _sv.GetNbValidSoldier<Empire>(id);
     }
 
     [HttpGet("{id:int}/enoughSoldiers")]
     public ActionResult<bool> EnoughSoldiers(int id)
     {
-        return _svGame.EnoughSoldiers(id);
+        return _sv.EnoughSoldiers(id);
     }
 
     [HttpGet("{id:int}/winnerTeam")]
     public ActionResult<string> GetWinnerTeam(int id)
     {
-        return _svGame.WinnerTeam(id);
+        return _sv.WinnerTeam(id);
     }
 
 

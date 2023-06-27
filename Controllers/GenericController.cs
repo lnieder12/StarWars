@@ -9,12 +9,12 @@ public class GenericController<T> : ControllerBase where T : class
 {
     protected StarWarsDbContext Context;
 
-    protected Service<T> Service;
+    protected IService<T> Service;
 
-    public GenericController(StarWarsDbContext context)
+    public GenericController(StarWarsDbContext context, IService<T> service)
     {
         Context = context;
-        Service = new Service<T>(context);
+        Service = service;
     }
 
     // GET

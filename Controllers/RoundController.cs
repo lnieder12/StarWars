@@ -10,32 +10,22 @@ namespace StarWars.Controllers;
 public class RoundController : GenericController<Round>
 {
 
-    private readonly ServiceRound _svRound;
+    private readonly IRoundService _sv;
 
-    public RoundController(StarWarsDbContext context) : base(context)
+
+    public RoundController(StarWarsDbContext context, IService<Round> service, IRoundService sv) : base(context, service)
     {
-        _svRound = new ServiceRound(context);
+        _sv = sv;
     }
 
     public override ActionResult<List<Round>> GetAll()
     {
-        return _svRound.GetAll();
+        return _sv.GetAll();
     }
-
-    // [HttpPost("{att:int}/{def:int}")]
-    // public ActionResult<Round> AddRound(int att, int def)
-    // {
-    //     var round = svRound.AddRound(att, def);
-    //     if(round == null)
-    //     {
-    //         return BadRequest();
-    //     }
-    //     return round;
-// }
 
     public override ActionResult<Round> Get(int id)
     {
-        var round = _svRound.GetInclude(id);
+        var round = _sv.GetInclude(id);
         if (round == null)
         {
             return BadRequest();
