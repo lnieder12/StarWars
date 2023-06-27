@@ -1,5 +1,6 @@
 ﻿using StarWars.Model;
 using Microsoft.AspNetCore.Mvc;
+using StarWars.Service;
 
 namespace StarWars.Controllers;
 
@@ -9,39 +10,27 @@ namespace StarWars.Controllers;
 public class RoundController : GenericController<Round>
 {
 
-    private ServiceRound svRound;
+    private readonly IRoundService _sv;
 
-    public RoundController(StarWarsDbContext context) : base(context)
+
+    public RoundController(StarWarsDbContext context, IService<Round> service, IRoundService sv) : base(context, service)
     {
-        svRound = new ServiceRound(context);
+        _sv = sv;
     }
 
     public override ActionResult<List<Round>> GetAll()
     {
-        return svRound.GetAll();
-    }
-
-    [HttpPost("{att:int}/{def:int}")]
-    public ActionResult<Round> AddRound(int att, int def)
-    {
-        var round = svRound.AddRound(att, def);
-        if(round == null)
-        {
-            return BadRequest();
-        }
-        return round;
+        return _sv.GetAll();
     }
 
     public override ActionResult<Round> Get(int id)
     {
-        var round = svRound.GetInclude(id);
+        var round = _sv.GetInclude(id);
         if (round == null)
         {
             return BadRequest();
         }
         return round;
     }
-
-    
 
 }

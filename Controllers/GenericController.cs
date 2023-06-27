@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using StarWars.Model;
+using StarWars.Service;
 
 namespace StarWars.Controllers;
 
@@ -8,12 +9,12 @@ public class GenericController<T> : ControllerBase where T : class
 {
     protected StarWarsDbContext Context;
 
-    protected Service<T> Service;
+    protected IService<T> Service;
 
-    public GenericController(StarWarsDbContext context)
+    public GenericController(StarWarsDbContext context, IService<T> service)
     {
         Context = context;
-        Service = new Service<T>(context);
+        Service = service;
     }
 
     // GET
@@ -25,7 +26,7 @@ public class GenericController<T> : ControllerBase where T : class
 
 
     // GET
-    [HttpGet("{id}")]
+    [HttpGet("{id:int}")]
     public virtual ActionResult<T> Get(int id)
     {
         var item = Service.Get(id);
@@ -38,7 +39,7 @@ public class GenericController<T> : ControllerBase where T : class
 
 
     // PATCH
-    [HttpPatch("{id}")]
+    [HttpPatch("{id:int}")]
     public ActionResult<T> Patch(int id, [FromBody] JsonPatchDocument<T> patchDocument)
     {
         var item = Service.Patch(id, patchDocument);
@@ -64,11 +65,12 @@ public class GenericController<T> : ControllerBase where T : class
 
 
     // DELETE
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:int}")]
     public ActionResult<bool> Delete(int id)
     {
         if(Service.Delete(id))
             return true;
         return NotFound();
     }
+
 }
