@@ -14,7 +14,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StarWars.Repository", "..\S
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StarWars.Model", "..\StarWars.Model\StarWars.Model.csproj", "{C88E0518-8BBA-4AE1-B084-B34212BB172F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StarWars.Page", "..\StarWars.Page\StarWars.Page.csproj", "{55822662-30FE-4DC7-8F58-F50311D0FD20}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StarWars.Page", "..\StarWars.Page\StarWars.Page.csproj", "{55822662-30FE-4DC7-8F58-F50311D0FD20}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
