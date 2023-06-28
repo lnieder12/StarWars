@@ -10,14 +10,14 @@ builder.Services.AddCors(o =>
 {
     o.AddPolicy(MyAllowSpecificOrigins, policyBuilder =>
     {
-        policyBuilder.WithOrigins("http://localhost:4200")
+        policyBuilder.WithOrigins("http://localhost:4200", "http://localhost:4202")
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
 });
 
 builder.Services.AddStarWarsServices();
-    
+
 
 builder.Services.AddControllers()
     .AddNewtonsoftJson(
